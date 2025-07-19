@@ -10,6 +10,7 @@ export class GameService {
   private httpClient = inject(HttpClient);
 
   loading = signal(false);
+  game = signal<Game | null>(null);
 
   createGame(name: string): Observable<Game> {
     this.loading.set(true);
@@ -31,8 +32,14 @@ export class GameService {
       .get<Game>(`${environment.apiUrl}/memory/games/${id}`)
       .pipe(
         tap({
-          next: () => this.loading.set(false),
-          error: () => this.loading.set(false),
+          next: (game) => {
+            this.loading.set(false);
+            this.game.set(game);
+          },
+          error: () => {
+            this.loading.set(false);
+            this.game.set(null);
+          },
         }),
         catchError(() => {
           this.loading.set(false);

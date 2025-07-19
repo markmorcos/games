@@ -17,38 +17,7 @@
 
   <main class="memory-content">
     <div class="container">
-      <div class="form-wrapper">
-        <div class="header">
-          <h1 class="title">🎮 New Game</h1>
-        </div>
-
-        <form class="game-form" #form="ngForm" (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <input
-              id="name"
-              name="name"
-              type="text"
-              class="form-input"
-              [(ngModel)]="name"
-              required
-              placeholder="Enter your game name..."
-              autocomplete="off"
-              [disabled]="gameService.loading()"
-            />
-          </div>
-
-          <div class="form-actions">
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="form.invalid || gameService.loading()"
-            >
-              <span class="btn-icon">🚀</span>
-              Create
-            </button>
-          </div>
-        </form>
-      </div>
+      <router-outlet></router-outlet>
     </div>
   </main>
 </div>

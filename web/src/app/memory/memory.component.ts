@@ -1,21 +1,11 @@
-import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { GameService } from './game.service';
-import { FormsModule } from '@angular/forms';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-memory',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterOutlet],
   templateUrl: './memory.component.html',
   styleUrl: './memory.component.css',
 })
-export class MemoryComponent {
-  gameService = inject(GameService);
-
-  name = '';
-
-  onSubmit() {
-    this.gameService.createGame(this.name).subscribe();
-  }
-}
+export class MemoryComponent {}

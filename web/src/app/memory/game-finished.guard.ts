@@ -15,7 +15,7 @@ export const GameFinishedGuard: CanActivateFn = (route) => {
     .pipe(
       map(
         (game) =>
-          game?.status !== 'finished' || router.createUrlTree(['/memory'])
+          game?.status === 'finished' || router.createUrlTree(['/memory', id])
       )
     );
 };

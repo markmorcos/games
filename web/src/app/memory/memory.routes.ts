@@ -11,24 +11,23 @@ export const memoryRoutes: Routes = [
       import('./memory.component').then((m) => m.MemoryComponent),
     children: [
       {
+        path: '',
+        loadComponent: () =>
+          import('./new/new.component').then((m) => m.NewComponent),
+      },
+      {
         path: ':id',
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            loadComponent: () =>
-              import('./game/game.component').then((m) => m.GameComponent),
-            canActivate: [GameIdGuard],
-          },
-          {
-            path: 'leaderboard',
-            loadComponent: () =>
-              import('./leaderboard/leaderboard.component').then(
-                (m) => m.LeaderboardComponent
-              ),
-            canActivate: [GameFinishedGuard],
-          },
-        ],
+        loadComponent: () =>
+          import('./game/game.component').then((m) => m.GameComponent),
+        canActivate: [GameIdGuard],
+      },
+      {
+        path: ':id/leaderboard',
+        loadComponent: () =>
+          import('./leaderboard/leaderboard.component').then(
+            (m) => m.LeaderboardComponent
+          ),
+        canActivate: [GameFinishedGuard],
       },
     ],
   },

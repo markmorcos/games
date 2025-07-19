@@ -7,11 +7,25 @@ services:
   - name: web
     image: ghcr.io/markmorcos/games-web
     context: web
-    port: 3000
+    port: 80
     ingress:
       host: games.morcos.tech
       path: /?(.*)
       pathType: ImplementationSpecific
+  # - name: api
+  #   image: ghcr.io/markmorcos/games-server
+  #   context: server
+  #   port: 3000
+  #   env:
+  #     - name: MONGO_URI
+  #       valueFrom:
+  #         secretKeyRef:
+  #           name: memory-database-secret
+  #           key: MONGO_URI
+  #   ingress:
+  #     host: games.morcos.tech
+  #     path: /api/?(.*)
+  #     pathType: ImplementationSpecific
   # - name: socket
   #   context: socket
   #   image: ghcr.io/markmorcos/games-socket
