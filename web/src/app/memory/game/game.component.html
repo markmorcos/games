@@ -1,9 +1,9 @@
-@if (gameService.loading()) {
+@if (loading()) {
 <p class="loading">Loading game...</p>
-} @else if (gameService.game()?.status === 'waiting') {
+} @else if (game()?.status === 'waiting') {
 <p class="waiting">Waiting for players...</p>
-} @else if (gameService.game()?.status === 'in-progress') {
+} @else if (game()?.status === 'in-progress') {
 <p class="playing">Game in progress...</p>
-} @else if (gameService.game()?.status === 'finished') {
+} @else if (game()?.status === 'finished') {
 <p class="finished">Game finished!</p>
 }

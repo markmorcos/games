@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 
 import { GameService } from '../game.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +13,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class GameComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  gameService = inject(GameService);
+  private destroyRef = inject(DestroyRef);
+  private gameService = inject(GameService);
+
+  game = this.gameService.game;
+  loading = this.gameService.loading;
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -22,6 +26,8 @@ export class GameComponent {
       return;
     }
 
-    this.gameService.getGame(id).subscribe();
+    const subscription = this.gameService.getGame(id).subscribe();
+
+    this.destroyRef.onDestroy(() => subscription.unsubscribe());
   }
 }
