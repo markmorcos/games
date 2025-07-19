@@ -1,0 +1,22 @@
+version: 0.4.6
+
+namespace: games
+project: games
+
+services:
+  - name: web
+    image: ghcr.io/markmorcos/games-web
+    context: web
+    port: 3000
+    ingress:
+      host: games.morcos.tech
+      path: /?(.*)
+      pathType: ImplementationSpecific
+  # - name: socket
+  #   context: socket
+  #   image: ghcr.io/markmorcos/games-socket
+  #   port: 8080
+  #   ingress:
+  #     host: games.morcos.tech
+  #     path: /socket/?(.*)
+  #     pathType: ImplementationSpecific
