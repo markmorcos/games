@@ -80,21 +80,23 @@ export class GameService {
     }
   }
 
-  async nextTurn(gameId: string, playerName: string): Promise<void> {
+  async nextTurn(gameId: string): Promise<string | null> {
     try {
       const game = await this.gameModel.findById(gameId);
-      if (!game) return;
+      if (!game) return null;
 
       const currentIndex = game.players.findIndex(
-        (player) => player.name === playerName,
+        (player) => player.name === game.currentPlayer,
       );
       const nextIndex = (currentIndex + 1) % game.players.length;
 
       await this.gameModel.findByIdAndUpdate(gameId, {
         currentPlayer: game.players[nextIndex].name,
       });
+
+      return game.players[nextIndex].name;
     } catch {
-      return;
+      return null;
     }
   }
 

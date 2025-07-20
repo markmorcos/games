@@ -83,6 +83,13 @@ export class GameService {
     });
   }
 
+  setTurn(playerName: string): void {
+    this.game.update((game) => {
+      if (!game) return game;
+      return { ...game, currentPlayer: playerName };
+    });
+  }
+
   finishGame(): void {
     this.game.update((game) => {
       if (!game) return game;

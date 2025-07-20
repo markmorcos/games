@@ -33,7 +33,6 @@ export class GameComponent {
   );
   waiting = computed(() => this.game()?.status === 'waiting');
   started = computed(() => this.game()?.status === 'in-progress');
-  flippedCards = signal<string[]>([]);
   canFinish = computed(
     () =>
       this.finished() ||
@@ -81,7 +80,7 @@ export class GameComponent {
     });
 
     this.socketService.socket.on('turn-changed', (playerName: string) => {
-      this.gameService.nextTurn(playerName);
+      this.gameService.setTurn(playerName);
     });
 
     this.socketService.socket.on('game-finished', () => {
@@ -107,7 +106,19 @@ export class GameComponent {
 
   flipCard(index: number) {
     const card = this.game()!.cards[index];
-    if (!card || card.flipped) return;
+    if (
+      !card ||
+      card.flipped ||
+      this.game()!.currentPlayer !== this.playerName ||
+      this.game()!.matchedCards.includes(card.value) ||
+      this.game()!.cards.filter(
+        (c, i) =>
+          i !== index &&
+          c.flipped &&
+          !this.game()!.matchedCards.includes(c.value)
+      ).length === 2
+    )
+      return;
 
     const match = !!this.game()!.cards.find(
       (c, i) => c.value === card.value && i !== index && c.flipped

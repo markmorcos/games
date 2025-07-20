@@ -76,14 +76,13 @@ export class GameGateway {
     client.to(gameId).emit('card-flipped', { card, index });
   }
 
-  @SubscribeMessage('change-turn')
+  @SubscribeMessage('next-turn')
   async handleNextTurn(
-    @MessageBody()
-    { gameId, playerName }: { gameId: string; playerName: string },
+    @MessageBody() gameId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    await this.gameService.nextTurn(gameId, playerName);
-    client.to(gameId).emit('turn-changed', playerName);
+    const currentPlayer = await this.gameService.nextTurn(gameId);
+    client.to(gameId).emit('turn-changed', currentPlayer);
   }
 
   @SubscribeMessage('finish-game')

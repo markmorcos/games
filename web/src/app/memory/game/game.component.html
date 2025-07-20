@@ -21,7 +21,8 @@
 @for (player of game()?.players; track player) {
 <p>{{ player.name }}</p>
 } } @else if (game()?.status === 'in-progress') {
-<div>{{ game()?.currentPlayer }}'s turn</div>
+<p class="waiting">{{ game()?.name }}</p>
+<p>{{ game()?.currentPlayer }}'s turn</p>
 <div class="game-board">
   @for (entry of game()!.cards.entries(); track entry[0]) {
   <div
