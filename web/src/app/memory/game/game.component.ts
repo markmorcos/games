@@ -80,8 +80,8 @@ export class GameComponent {
       }
     });
 
-    this.socketService.socket.on('next-turn', () => {
-      this.gameService.nextTurn();
+    this.socketService.socket.on('turn-changed', (playerName: string) => {
+      this.gameService.nextTurn(playerName);
     });
 
     this.socketService.socket.on('game-finished', () => {
@@ -123,8 +123,6 @@ export class GameComponent {
     this.gameService.flipCard(index);
 
     if (match) {
-      this.socketService.nextTurn(this.gameId!);
-      this.gameService.nextTurn();
       this.gameService.matchCard(card.value);
     } else {
       const otherIndex = this.game()!.cards.findIndex(
@@ -137,7 +135,7 @@ export class GameComponent {
       if (otherIndex !== -1) {
         setTimeout(() => {
           this.socketService.nextTurn(this.gameId!);
-          this.gameService.nextTurn();
+          this.gameService.nextTurn(this.playerName);
 
           this.socketService.flipCard({
             gameId: this.gameId!,

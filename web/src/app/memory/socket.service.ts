@@ -46,7 +46,7 @@ export class SocketService {
   }
 
   nextTurn(gameId: string) {
-    this.socket.emit('next-turn', gameId);
+    this.socket.emit('change-turn', gameId);
   }
 
   finishGame(gameId: string) {

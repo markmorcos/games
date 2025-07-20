@@ -10,8 +10,8 @@ export class GameService {
 
   async create(name: string): Promise<Game> {
     const cards = [
-      ...Array.from({ length: 2 }, (_, i) => `${i + 1}`),
-      ...Array.from({ length: 2 }, (_, i) => `${i + 1}`),
+      ...Array.from({ length: 10 }, (_, i) => `${i + 1}`),
+      ...Array.from({ length: 10 }, (_, i) => `${i + 1}`),
     ]
       .map((value) => ({ value, flipped: false }))
       .sort(() => Math.random() - 0.5);
@@ -80,17 +80,17 @@ export class GameService {
     }
   }
 
-  async nextTurn(id: string): Promise<void> {
+  async nextTurn(gameId: string, playerName: string): Promise<void> {
     try {
-      const game = await this.gameModel.findById(id);
+      const game = await this.gameModel.findById(gameId);
       if (!game) return;
 
       const currentIndex = game.players.findIndex(
-        (player) => player.name === game.currentPlayer,
+        (player) => player.name === playerName,
       );
       const nextIndex = (currentIndex + 1) % game.players.length;
 
-      await this.gameModel.findByIdAndUpdate(id, {
+      await this.gameModel.findByIdAndUpdate(gameId, {
         currentPlayer: game.players[nextIndex].name,
       });
     } catch {

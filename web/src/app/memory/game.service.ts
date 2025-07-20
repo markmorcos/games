@@ -72,11 +72,11 @@ export class GameService {
     });
   }
 
-  nextTurn(): void {
+  nextTurn(playerName: string): void {
     this.game.update((game) => {
       if (!game) return game;
       const currentIndex = game.players.findIndex(
-        (player) => player.name === game.currentPlayer
+        (player) => player.name === playerName
       );
       const nextIndex = (currentIndex + 1) % game.players.length;
       return { ...game, currentPlayer: game.players[nextIndex].name };
