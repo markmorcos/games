@@ -124,6 +124,7 @@ export class GameComponent {
 
     if (match) {
       this.socketService.nextTurn(this.gameId!);
+      this.gameService.nextTurn();
       this.gameService.matchCard(card.value);
     } else {
       const otherIndex = this.game()!.cards.findIndex(
@@ -136,6 +137,7 @@ export class GameComponent {
       if (otherIndex !== -1) {
         setTimeout(() => {
           this.socketService.nextTurn(this.gameId!);
+          this.gameService.nextTurn();
 
           this.socketService.flipCard({
             gameId: this.gameId!,
