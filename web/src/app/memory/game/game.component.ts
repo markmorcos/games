@@ -1,5 +1,5 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { GameService } from '../game.service';
 import { SocketService } from '../socket.service';
@@ -25,17 +25,38 @@ export class GameComponent {
   playerName = localStorage.getItem('playerName') || '';
   joined = computed(
     () =>
-      this.game()?.players.some((player) => player.name === this.playerName) ||
+      (!this.loading() &&
+        this.game()?.players.some(
+          (player) => player.name === this.playerName
+        )) ||
       false
   );
+  waiting = computed(() => this.game()?.status === 'waiting');
   started = computed(() => this.game()?.status === 'in-progress');
   flippedCards = signal<string[]>([]);
+  canFinish = computed(
+    () =>
+      this.finished() ||
+      this.game()!.cards.length === this.game()!.matchedCards.length * 2
+  );
   finished = computed(() => this.game()?.status === 'finished');
 
   ngOnInit() {
-    const subscription = this.gameService.getGame(this.gameId!).subscribe();
+    const subscription = this.gameService.getGame(this.gameId!).subscribe({
+      complete: () => {
+        if (!this.gameId) return;
+
+        if (localStorage.getItem('playerName') && this.waiting()) {
+          this.joinGame();
+        }
+
+        if (this.canFinish()) {
+          this.endGame();
+        }
+      },
+    });
     this.destroyRef.onDestroy(() => subscription.unsubscribe());
-    window.onbeforeunload = () => this.ngOnDestroy();
+    // window.onbeforeunload = () => this.ngOnDestroy();
 
     this.socketService.viewGame(this.gameId!);
 
@@ -51,18 +72,27 @@ export class GameComponent {
       this.gameService.startGame();
     });
 
-    this.socketService.socket.on('card-flipped', ({ playerName, index }) => {
-      if (this.playerName !== playerName) {
-        // this.gameService.flipCard(index);
+    this.socketService.socket.on('card-flipped', ({ index }) => {
+      this.gameService.flipCard(index);
+
+      if (this.canFinish()) {
+        this.endGame();
       }
+    });
+
+    this.socketService.socket.on('next-turn', () => {
+      this.gameService.nextTurn();
+    });
+
+    this.socketService.socket.on('game-finished', () => {
+      this.gameService.finishGame();
     });
   }
 
-  ngOnDestroy() {
-    this.socketService.leaveGame(this.gameId!, this.playerName);
-    this.gameService.removePlayer(this.playerName);
-    localStorage.removeItem('playerName');
-  }
+  // ngOnDestroy() {
+  //   this.socketService.leaveGame(this.gameId!, this.playerName);
+  //   this.gameService.removePlayer(this.playerName);
+  // }
 
   joinGame() {
     localStorage.setItem('playerName', this.playerName);
@@ -93,6 +123,7 @@ export class GameComponent {
     this.gameService.flipCard(index);
 
     if (match) {
+      this.socketService.nextTurn(this.gameId!);
       this.gameService.matchCard(card.value);
     } else {
       const otherIndex = this.game()!.cards.findIndex(
@@ -104,7 +135,7 @@ export class GameComponent {
 
       if (otherIndex !== -1) {
         setTimeout(() => {
-          console.log({ card, index, otherIndex });
+          this.socketService.nextTurn(this.gameId!);
 
           this.socketService.flipCard({
             gameId: this.gameId!,
@@ -126,10 +157,16 @@ export class GameComponent {
         }, 1000);
       }
     }
+
+    if (this.canFinish()) {
+      this.endGame();
+    }
   }
 
   endGame() {
-    this.socketService.finishGame(this.gameId!);
-    this.gameService.finishGame();
+    setTimeout(() => {
+      this.socketService.finishGame(this.gameId!);
+      this.gameService.finishGame();
+    }, 2000);
   }
 }

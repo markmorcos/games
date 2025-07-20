@@ -1,8 +1,8 @@
 @if (loading()) {
 <p class="loading">Loading game...</p>
-} @else if (game()?.status !== 'waiting' && !joined()) {
+} @else if (!waiting() && !joined()) {
 <p class="error">Game already started.</p>
-} @else if (game()?.status === 'waiting' && !joined()) {
+} @else if (waiting() && !joined()) {
 <form (submit)="joinGame()">
   <input
     type="text"
@@ -21,18 +21,25 @@
 @for (player of game()?.players; track player) {
 <p>{{ player.name }}</p>
 } } @else if (game()?.status === 'in-progress') {
+<div>{{ game()?.currentPlayer }}'s turn</div>
 <div class="game-board">
   @for (entry of game()!.cards.entries(); track entry[0]) {
-  <div class="card" (click)="flipCard(entry[0])">
-    @if (entry[1].flipped) {
-    <div class="card-front">{{ entry[1].value }}</div>
+  <div
+    class="card"
+    (click)="
+      this.playerName === game()?.currentPlayer ? flipCard(entry[0]) : null
+    "
+  >
+    @if (entry[1].flipped || game()!.matchedCards.includes(entry[1].value)) {
+    <div class="card-front">
+      <img [src]="'https://robohash.org/3' + entry[1].value" alt="Card Image" />
+    </div>
     } @else {
     <div class="card-back">?</div>
     }
   </div>
   }
 </div>
-<button (click)="endGame()">End Game</button>
 } @else if (game()?.status === 'finished') {
 <p class="finished">Game finished!</p>
 }

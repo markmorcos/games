@@ -10,8 +10,8 @@ export class GameService {
 
   async create(name: string): Promise<Game> {
     const cards = [
-      ...Array.from({ length: 10 }, (_, i) => `${i + 1}`),
-      ...Array.from({ length: 10 }, (_, i) => `${i + 1}`),
+      ...Array.from({ length: 2 }, (_, i) => `${i + 1}`),
+      ...Array.from({ length: 2 }, (_, i) => `${i + 1}`),
     ]
       .map((value) => ({ value, flipped: false }))
       .sort(() => Math.random() - 0.5);
@@ -30,7 +30,7 @@ export class GameService {
   async joinGame(id: string, playerName: string): Promise<void> {
     try {
       await this.gameModel.findByIdAndUpdate(id, {
-        $addToSet: { players: playerName },
+        $addToSet: { players: { name: playerName, score: 0 } },
       });
     } catch {
       return;
@@ -39,8 +39,10 @@ export class GameService {
 
   async leaveGame(id: string, playerName: string): Promise<void> {
     try {
+      const game = await this.gameModel.findById(id);
+      if (!game) return;
       await this.gameModel.findByIdAndUpdate(id, {
-        $pull: { players: playerName },
+        players: game.players.filter((player) => player.name !== playerName),
       });
     } catch {
       return;
@@ -49,8 +51,11 @@ export class GameService {
 
   async startGame(id: string): Promise<void> {
     try {
+      const game = await this.gameModel.findById(id);
+      if (!game) return;
       await this.gameModel.findByIdAndUpdate(id, {
         status: 'in-progress',
+        currentPlayer: game.players[0].name,
       });
     } catch {
       return;
@@ -69,6 +74,24 @@ export class GameService {
     try {
       await this.gameModel.findByIdAndUpdate(id, {
         $addToSet: { matchedCards: card },
+      });
+    } catch {
+      return;
+    }
+  }
+
+  async nextTurn(id: string): Promise<void> {
+    try {
+      const game = await this.gameModel.findById(id);
+      if (!game) return;
+
+      const currentIndex = game.players.findIndex(
+        (player) => player.name === game.currentPlayer,
+      );
+      const nextIndex = (currentIndex + 1) % game.players.length;
+
+      await this.gameModel.findByIdAndUpdate(id, {
+        currentPlayer: game.players[nextIndex].name,
       });
     } catch {
       return;

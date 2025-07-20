@@ -42,7 +42,11 @@ export class GameService {
   startGame(): void {
     this.game.update((game) => {
       if (!game) return game;
-      return { ...game, status: 'in-progress' };
+      return {
+        ...game,
+        status: 'in-progress',
+        currentPlayer: game.players[0].name,
+      };
     });
   }
 
@@ -65,6 +69,17 @@ export class GameService {
         ...game,
         matchedCards: Array.from(new Set([...game.matchedCards, cardValue])),
       };
+    });
+  }
+
+  nextTurn(): void {
+    this.game.update((game) => {
+      if (!game) return game;
+      const currentIndex = game.players.findIndex(
+        (player) => player.name === game.currentPlayer
+      );
+      const nextIndex = (currentIndex + 1) % game.players.length;
+      return { ...game, currentPlayer: game.players[nextIndex].name };
     });
   }
 

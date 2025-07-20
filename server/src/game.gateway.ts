@@ -30,24 +30,29 @@ export class GameGateway {
   async handleJoinGame(
     @MessageBody()
     { gameId, playerName }: { gameId: string; playerName: string },
+    @ConnectedSocket() client: Socket,
   ) {
     await this.gameService.joinGame(gameId, playerName);
-    this.server.to(gameId).emit('game-joined', playerName);
+    client.to(gameId).emit('game-joined', playerName);
   }
 
   @SubscribeMessage('leave-game')
   async handleLeaveGame(
     @MessageBody()
     { gameId, playerName }: { gameId: string; playerName: string },
+    @ConnectedSocket() client: Socket,
   ) {
     await this.gameService.leaveGame(gameId, playerName);
-    this.server.to(gameId).emit('game-left', playerName);
+    client.to(gameId).emit('game-left', playerName);
   }
 
   @SubscribeMessage('start-game')
-  async handleStartGame(@MessageBody() gameId: string) {
+  async handleStartGame(
+    @MessageBody() gameId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
     await this.gameService.startGame(gameId);
-    this.server.to(gameId).emit('game-started');
+    client.to(gameId).emit('game-started');
   }
 
   @SubscribeMessage('flip-card')
@@ -55,26 +60,37 @@ export class GameGateway {
     @MessageBody()
     {
       gameId,
-      playerName,
       card,
       index,
       match,
     }: {
       gameId: string;
-      playerName: string;
       card: string;
       index: number;
       match: boolean;
     },
+    @ConnectedSocket() client: Socket,
   ) {
     await this.gameService.flipCard(gameId, index);
     if (match) await this.gameService.matchCard(gameId, card);
-    this.server.to(gameId).emit('card-flipped', { playerName, card, index });
+    client.to(gameId).emit('card-flipped', { card, index });
+  }
+
+  @SubscribeMessage('next-turn')
+  async handleNextTurn(
+    @MessageBody() gameId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    await this.gameService.nextTurn(gameId);
+    client.to(gameId).emit('next-turn', gameId);
   }
 
   @SubscribeMessage('finish-game')
-  async handleFinishGame(@MessageBody() gameId: string) {
+  async handleFinishGame(
+    @MessageBody() gameId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
     await this.gameService.finishGame(gameId);
-    this.server.to(gameId).emit('game-finished');
+    client.to(gameId).emit('game-finished');
   }
 }

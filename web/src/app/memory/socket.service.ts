@@ -45,6 +45,10 @@ export class SocketService {
     this.socket.emit('flip-card', { gameId, playerName, card, index, match });
   }
 
+  nextTurn(gameId: string) {
+    this.socket.emit('next-turn', gameId);
+  }
+
   finishGame(gameId: string) {
     this.socket.emit('finish-game', gameId);
   }
