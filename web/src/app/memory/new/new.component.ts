@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 
 import { GameService } from '../game.service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new',
@@ -11,11 +12,18 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './new.component.css',
 })
 export class NewComponent {
-  gameService = inject(GameService);
+  private router = inject(Router);
+  private gameService = inject(GameService);
+
+  loading = this.gameService.loading;
 
   name = '';
 
   onSubmit() {
-    this.gameService.createGame(this.name).subscribe();
+    this.gameService.createGame(this.name).subscribe({
+      next: (game) => {
+        this.router.navigate(['/memory', game._id]);
+      },
+    });
   }
 }

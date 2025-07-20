@@ -7,10 +7,16 @@ export class Game extends Document {
   name: string;
 
   @Prop({ default: [] })
-  players: string[];
+  players: { name: string; score: number }[];
 
-  @Prop()
-  cards: string[];
+  @Prop({ required: false })
+  currentPlayer: string;
+
+  @Prop({ default: [] })
+  cards: { value: string; flipped: boolean }[];
+
+  @Prop({ default: [] })
+  matchedCards: string[];
 
   @Prop({ default: 'waiting', enum: ['waiting', 'in-progress', 'finished'] })
   status: string;

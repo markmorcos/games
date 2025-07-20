@@ -5,24 +5,47 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SocketService {
-  private socket: Socket;
+  socket: Socket;
 
   constructor() {
     this.socket = io(`${environment.socketUrl}/memory`, {
-      path: '/socket/memory/socket.io',
       transports: ['websocket'],
     });
   }
 
-  joinGame(userId: string, gameId: string) {
-    this.socket.emit('join-game', { userId, gameId });
+  viewGame(gameId: string) {
+    this.socket.emit('view-game', gameId);
   }
 
-  leaveGame(userId: string, gameId: string) {
-    this.socket.emit('leave-game', { userId, gameId });
+  joinGame(gameId: string, playerName: string) {
+    this.socket.emit('join-game', { gameId, playerName });
   }
 
-  flipCard(userId: string, gameId: string, cardId: string) {
-    this.socket.emit('flip-card', { userId, gameId, cardId });
+  leaveGame(gameId: string, playerName: string) {
+    this.socket.emit('leave-game', { gameId, playerName });
+  }
+
+  startGame(gameId: string) {
+    this.socket.emit('start-game', gameId);
+  }
+
+  flipCard({
+    gameId,
+    playerName,
+    card,
+    index,
+    match,
+  }: {
+    gameId: string;
+    playerName: string;
+    card: string;
+    index: number;
+    match: boolean;
+  }) {
+    this.socket.emit('flip-card', { gameId, playerName, card, index, match });
+  }
+
+  finishGame(gameId: string) {
+    this.socket.emit('finish-game', gameId);
   }
 }

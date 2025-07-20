@@ -13,7 +13,7 @@
         required
         placeholder="Enter your game name..."
         autocomplete="off"
-        [disabled]="gameService.loading()"
+        [disabled]="loading()"
       />
     </div>
 
@@ -21,7 +21,7 @@
       <button
         type="submit"
         class="btn btn-primary"
-        [disabled]="form.invalid || gameService.loading()"
+        [disabled]="form.invalid || loading()"
       >
         <span class="btn-icon">🚀</span>
         Create

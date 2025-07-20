@@ -1,9 +1,38 @@
 @if (loading()) {
 <p class="loading">Loading game...</p>
-} @else if (game()?.status === 'waiting') {
+} @else if (game()?.status !== 'waiting' && !joined()) {
+<p class="error">Game already started.</p>
+} @else if (game()?.status === 'waiting' && !joined()) {
+<form (submit)="joinGame()">
+  <input
+    type="text"
+    placeholder="Enter your name"
+    [(ngModel)]="playerName"
+    name="playerName"
+  />
+  <button type="submit">Join Game</button>
+  @for (player of game()?.players; track player) {
+  <p>{{ player.name }}</p>
+  }
+</form>
+} @else if (game()?.status === 'waiting' && joined()) {
 <p class="waiting">Waiting for players...</p>
-} @else if (game()?.status === 'in-progress') {
-<p class="playing">Game in progress...</p>
+<button (click)="startGame()">Start Game</button>
+@for (player of game()?.players; track player) {
+<p>{{ player.name }}</p>
+} } @else if (game()?.status === 'in-progress') {
+<div class="game-board">
+  @for (entry of game()!.cards.entries(); track entry[0]) {
+  <div class="card" (click)="flipCard(entry[0])">
+    @if (entry[1].flipped) {
+    <div class="card-front">{{ entry[1].value }}</div>
+    } @else {
+    <div class="card-back">?</div>
+    }
+  </div>
+  }
+</div>
+<button (click)="endGame()">End Game</button>
 } @else if (game()?.status === 'finished') {
 <p class="finished">Game finished!</p>
 }

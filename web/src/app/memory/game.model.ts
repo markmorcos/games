@@ -1,9 +1,9 @@
 export interface Game {
-  id: string;
+  _id: string;
   name: string;
-  players: string[];
+  players: { name: string; score: number }[];
   currentPlayer: string;
-  cards: string[];
+  cards: { value: string; flipped: boolean }[];
   matchedCards: string[];
   status: 'waiting' | 'in-progress' | 'finished';
 }

@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   NotFoundException,
   Param,
   Post,
@@ -12,7 +13,8 @@ import { GameService } from './game.service';
 
 @Controller('api/memory/games')
 export class AppController {
-  constructor(private readonly gameService: GameService) {}
+  @Inject(GameService)
+  private readonly gameService: GameService;
 
   @Post()
   async createGame(@Body('name') name: string) {
