@@ -71,13 +71,19 @@ export class GameService {
   }
 
   async matchCard(id: string, card: string): Promise<void> {
-    try {
-      await this.gameModel.findByIdAndUpdate(id, {
-        $addToSet: { matchedCards: card },
-      });
-    } catch {
-      return;
-    }
+    const game = await this.gameModel.findById(id);
+    if (!game) return;
+    if (game.matchedCards.includes(card)) return;
+
+    game.matchedCards.push(card);
+    const updatedPlayers = game.players.map((player) => ({
+      ...player,
+      score:
+        player.name === game.currentPlayer ? player.score + 1 : player.score,
+    }));
+    game.players = updatedPlayers;
+
+    await game.save();
   }
 
   async nextTurn(gameId: string): Promise<string | null> {

@@ -39,6 +39,12 @@ export class GameComponent {
       this.game()!.cards.length === this.game()!.matchedCards.length * 2
   );
   finished = computed(() => this.game()?.status === 'finished');
+  winner = computed(() => {
+    return this.game()?.players.find(
+      (player) =>
+        player.score === Math.max(...this.game()!.players.map((p) => p.score))
+    )?.name;
+  });
 
   ngOnInit() {
     const subscription = this.gameService.getGame(this.gameId!).subscribe({

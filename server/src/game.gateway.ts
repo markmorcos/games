@@ -32,6 +32,7 @@ export class GameGateway {
     { gameId, playerName }: { gameId: string; playerName: string },
     @ConnectedSocket() client: Socket,
   ) {
+    await client.join(gameId);
     await this.gameService.joinGame(gameId, playerName);
     client.to(gameId).emit('game-joined', playerName);
   }
@@ -42,6 +43,7 @@ export class GameGateway {
     { gameId, playerName }: { gameId: string; playerName: string },
     @ConnectedSocket() client: Socket,
   ) {
+    await client.leave(gameId);
     await this.gameService.leaveGame(gameId, playerName);
     client.to(gameId).emit('game-left', playerName);
   }

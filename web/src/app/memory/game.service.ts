@@ -67,6 +67,13 @@ export class GameService {
       if (!game) return game;
       return {
         ...game,
+        players: game.players.map((player) => ({
+          ...player,
+          score:
+            player.name === game.currentPlayer
+              ? player.score + 1
+              : player.score,
+        })),
         matchedCards: Array.from(new Set([...game.matchedCards, cardValue])),
       };
     });
