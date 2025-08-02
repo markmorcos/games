@@ -203,22 +203,6 @@ form p,
   font-size: 1.1rem;
 }
 
-/* Game Board */
-.game-board {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
-  max-width: 100%;
-  width: 100%;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-}
-
 /* Card Styles */
 .card {
   aspect-ratio: 1;
@@ -310,71 +294,6 @@ form p,
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .game-board {
-    gap: 0.875rem;
-    padding: 1.5rem;
-  }
-}
-
-@media (max-width: 992px) {
-  .game-board {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.75rem;
-    padding: 1.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  :host {
-    padding: 1rem;
-  }
-
-  .game-board {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-    padding: 1.5rem;
-  }
-
-  form {
-    margin: 1rem;
-    padding: 1.5rem;
-  }
-
-  button {
-    width: auto;
-    min-width: 180px;
-    margin: 0.5rem auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .game-board {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    padding: 1rem;
-  }
-
-  .card-back {
-    font-size: 1.5rem;
-  }
-
-  button {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.9rem;
-    min-width: 160px;
-  }
-}
-
-/* Large screens - 6 column grid */
-@media (min-width: 1024px) {
-  .game-board {
-    grid-template-columns: repeat(6, 1fr);
-    max-width: 800px;
-  }
 }
 
 /* Accessibility */
@@ -529,13 +448,18 @@ form p,
 .game-board {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 1fr);
   gap: 1rem;
-  margin: 2rem auto;
-  padding: 2rem;
+  margin: 1rem auto;
+  padding: 1.5rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   backdrop-filter: blur(10px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 90%;
+  aspect-ratio: 4/5;
+  max-height: 60vh;
 }
 
 /* Card Styles */
@@ -545,8 +469,9 @@ form p,
   cursor: pointer;
   border-radius: 12px;
   transition: transform 0.3s ease;
-  width: 150px;
-  height: 150px;
+  width: 100%;
+  height: auto;
+  min-height: 60px;
 }
 
 .card:hover {
@@ -639,7 +564,17 @@ form p,
   .game-board {
     gap: 0.75rem;
     padding: 1.5rem;
-    max-width: 100%;
+    max-width: 95vw;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+  }
+
+  .card {
+    min-height: 70px;
+  }
+
+  .card-back {
+    font-size: 1.5rem;
   }
 
   form {
@@ -655,13 +590,19 @@ form p,
 
 @media (max-width: 480px) {
   .game-board {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
     gap: 0.5rem;
     padding: 1rem;
+    max-width: 98vw;
+  }
+
+  .card {
+    min-height: 60px;
   }
 
   .card-back {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   button {
@@ -670,7 +611,40 @@ form p,
   }
 }
 
-/* Accessibility */
+/* Large screen optimizations */
+@media (min-width: 1024px) {
+  .game-board {
+    max-width: 700px;
+    gap: 1.2rem;
+    padding: 2rem;
+    max-height: 70vh;
+  }
+
+  .card {
+    min-height: 100px;
+  }
+
+  .card-back {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .game-board {
+    max-width: 750px;
+    gap: 1.5rem;
+    padding: 2.5rem;
+    max-height: 70vh;
+  }
+
+  .card {
+    min-height: 110px;
+  }
+
+  .card-back {
+    font-size: 2.2rem;
+  }
+} /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .card,
   .card-front,
